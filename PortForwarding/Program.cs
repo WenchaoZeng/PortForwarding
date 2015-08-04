@@ -21,9 +21,9 @@ namespace PortForwarding
 
         static void Main(string[] args)
         {
-            FromPort = 8080;
-            ToAddress = "10.30.70.130";
-            ToPort = 8080;
+            FromPort = 5432;
+            ToAddress = "192.168.241.66";
+            ToPort = 15432;
 
             try
             {
@@ -142,12 +142,12 @@ PortForwarding from_port to_address to_port");
 
                 if (forward1 > 0)
                 {
-                    Console.WriteLine("{0} > {1}: {2}.", forwarding.Client.Client.RemoteEndPoint, forwarding.Server.Client.RemoteEndPoint, forward1);
+                    Console.WriteLine("{0}  > {1}: {2}.", forwarding.Client.Client.RemoteEndPoint, forwarding.Server.Client.RemoteEndPoint, forward1);
                 }
 
                 if (forward2 > 0)
                 {
-                    Console.WriteLine("{0} < {1}: {2}.", forwarding.Client.Client.RemoteEndPoint, forwarding.Server.Client.RemoteEndPoint, forward2);
+                    Console.WriteLine("{0} <  {1}: {2}.", forwarding.Client.Client.RemoteEndPoint, forwarding.Server.Client.RemoteEndPoint, forward2);
                 }
             }
         }
