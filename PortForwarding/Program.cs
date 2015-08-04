@@ -100,7 +100,19 @@ PortForwarding from_port to_address to_port");
                     }
                     else if (DateTime.Now - forwarding.LastActiveTime > expiredTime)
                     {
-                        removingList.Add(forwarding);
+                        if (!Invoke(() =>
+                        {
+                            if (SocketConnected(forwarding.Client) && SocketConnected(forwarding.Server))
+                            {
+                                forwarding.LastActiveTime = DateTime.Now;
+                                return;
+                            }
+
+                            removingList.Add(forwarding);
+                        }))
+                        {
+                            removingList.Add(forwarding);
+                        }
                     }
                 }
 
@@ -109,6 +121,7 @@ PortForwarding from_port to_address to_port");
                 {
                     Invoke(() =>
                     {
+                        Console.WriteLine("Client closed: {0}", item.Client.Client.RemoteEndPoint);
                         item.Client.Close();
                         item.Server.Close();
                     });
@@ -181,6 +194,18 @@ PortForwarding from_port to_address to_port");
             }
 
             return false;
+        }
+
+        static bool SocketConnected(TcpClient client)
+        {
+            bool part1 = client.Client.Poll(1000, SelectMode.SelectRead);
+            bool part2 = (client.Client.Available == 0);
+            if (part1 & part2)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 
