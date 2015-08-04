@@ -63,6 +63,9 @@ PortForwarding from_port to_address to_port");
         static void Dispatcher()
         {
             TimeSpan expiredTime = TimeSpan.FromMinutes(1);
+            DateTime lastActiveTime = DateTime.Now;
+            TimeSpan idleTime = TimeSpan.FromSeconds(1);
+
             while (true)
             {
                 // Add new clients.
@@ -93,6 +96,7 @@ PortForwarding from_port to_address to_port");
                         if (!Invoke(() =>
                         {
                             Forward(forwarding);
+                            lastActiveTime = DateTime.Now;
                         }))
                         {
                             removingList.Add(forwarding);
@@ -132,6 +136,10 @@ PortForwarding from_port to_address to_port");
                 {
                     Console.WriteLine("Idle.");
                     Thread.Sleep(1000);
+                }
+                else if (DateTime.Now - lastActiveTime > idleTime)
+                {
+                    Thread.Sleep(100);
                 }
             }
         }
